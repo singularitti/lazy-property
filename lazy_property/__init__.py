@@ -19,7 +19,7 @@ class LazyProperty(property):
             the ``property.__set__`` method will raise an ``AttributeError``. But for a ``LazyWritableProperty``,
             this will not happen since a ``__set__`` method is given and overrides the ``property.__set__`` method.
         :param fdel: Usually ``None``.
-        :param doc: It will get the *method*s documentation if it is given.
+        :param doc: It will get the *method*'s documentation if it is given.
         """
 
         self.method = method
@@ -62,6 +62,9 @@ class LazyProperty(property):
 
         return result
 
+    def getter(self, fget):
+        return type(self)(self.method, fget, self.fset, self.fdel, self.__doc__)
+
 
 class LazyWritableProperty(LazyProperty):
     def __set__(self, instance, value):
@@ -80,3 +83,6 @@ class LazyWritableProperty(LazyProperty):
             setattr(instance, self.cache_name, value)
         else:
             self.fset(instance, value)
+
+    def setter(self, fset):
+        return type(self)(self.method, self.fget, fset, self.fdel, self.__doc__)
